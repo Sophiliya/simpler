@@ -39,7 +39,11 @@ module Simpler
     end
 
     def render_body
-      View.new(@request.env).render(binding)
+      if @request.env['simpler.template'].class == Hash
+        render_format
+      else
+        View.new(@request.env).render(binding)
+      end
     end
 
     def params
@@ -50,5 +54,10 @@ module Simpler
       @request.env['simpler.template'] = template
     end
 
+    def render_format
+      if @request.env['simpler.template'].keys.first == :plain
+        @request.env['simpler.template'].values.first
+      end
+    end
   end
 end
